@@ -1,0 +1,475 @@
+<html>
+
+<head>
+<title>Documentation for Dan's Graphics Routines</title>
+</head>
+
+<body bgcolor="#FFFFFF"
+         text="#666666"
+         link="#3333FF"
+        alink="#3333FF"
+        vlink="#3333FF"
+      >
+
+<img src="mouse.gif" align=right>
+
+<H1><a name="top">Documentation for Dan's Graphics Routines</a></H1>
+
+<UL>
+<li><a href="#intro">Introduction</a>
+<li><a href="#constructors">Constructors</a>
+<li><a href="#utilities">Utilities</a>
+<li><a href="#pixels">Pixel Manipulation</a>
+<li><a href="#lines">Line Drawing</a>
+<li><a href="#shapes">Assorted Shapes</a>
+<li><a href="#fillpath">Filled objects</a>
+<li><a href="#splines">Spline tool</a>
+<li><a href="#turtle">Turtle commands</a>
+<li><a href="#fullpic">Full Picture Manipulatiors</a>
+<li><a href="#putool">Put Tools</a>
+<li><a href="#IO">Input and output</a>
+<li><a href="#code">Code download</a>
+</UL>
+
+<hr size=4>
+
+<H2><a name="intro"><font color="#00AA00">Introduction</font></a>
+    <a href="#top">(top)</a></H2>
+
+   This set of graphics routines manipulated as 24-bit RGB
+raster/pixel based graphic.  They are implemented as a C++ class
+called pbm.  This class does not display the picture dircectly but can
+dump the picture in a portable format that can be viewed (laboriously)
+as an ASCII file and which can be read by XV or translated with the
+cjpeg command to a jpeg.  The commands that set pixels are all
+interpreted mod the image height or width, as appropriate, meaning
+that things wrap.  I like this, but you can fix it by patching the
+putpixel/getpixel routine.
+
+
+<hr size=4>
+
+<H2><a name="constructors"><font color="#00AA00">Constructors</font></a>
+    <a href="#top">(top)</a></H2>
+
+<H2><font color="#000000">pbm();</font></H2> 
+
+<p>Does nothing, don't use it unless your going to initialize with
+<i>readXV</i>.  A picture needs a size.
+
+<H2><font color="#000000">pbm(int sizex,int sizey);</font></H2>
+
+<p>Constructs a picture of the given size, sizex is width, sizey is
+height.
+
+<hr size=4>
+
+<H2><a name="utilities"><font color="#00AA00">Utilities</font></a>
+    <a href="#top">(top)</a></H2>
+
+<H2><font color="#000000">void clear();</font></H2>
+<p>Clear to picture to current background color (initially black).
+
+<H2><font color="#000000">void clear(unsigned short int rv,
+                                     unsigned short int gv, 
+                                     unsigned short int bv);</font></H2>
+<p>Clear to given (R,G,B) 24-bit color value.
+
+<H2><font color="#000000">int width();</font></H2>
+<p>Report picture width.
+
+<H2><font color="#000000">int height();</font></H2>
+<p>Report picture height.
+
+<hr size=4>
+<H2><a name="pixels"><font color="#00AA00">Pixel Manipulation</font></a>
+    <a href="#top">(top)</a></H2>
+
+<H2><font color="#000000">
+void putpixel(int xp,int yp,
+              unsigned short int rv,
+              unsigned short int gv, 
+              unsigned short int bv);</font></H2>
+<p>Set a pixel at position (xp,yp) to specified (R,G,B) value.
+
+<H2><font color="#000000">void putpixel(int xp,int yp);</font></H2>
+<p>Set pixel at position (xp,yp) to the current brush color.  Brush
+color is set with the <i>SetCol</i>method.
+
+<H2><font color="#000000">void flippixel(int xp,int yp);</font></H2>
+<p>Invert the R, G, and B values for the pixel.
+
+<H2><font color="#000000">void SetCol(unsigned short int red,
+               unsigned short int green,
+               unsigned short int blue);</font></H2>
+
+<p>Sets the brush color to the (R,G,B) value specified.
+
+<H2><font color="#000000">void SetColHSV(int hue,
+                                         int sat,
+                                         int val);</font></H2>
+
+<p>Sets the brush color to the (H,S,V) value specified.  H, hue, is in
+the range 0-359 and is degrees on the color wheel.  The sat parameters
+in in the range 0-100 with 0 washing out all the color and 100 being
+the most vibrant version of the color available.  The val parameter
+controls brightness from 0-100 in the range black to full brightness.
+
+<H2><font color="#000000">void setpixmode(int mode);</font></H2>
+<p>Normally any operation using pixels simply changes the pixel to
+either the given or current picture color.  This method changes the
+logical means of putting the pixel colors down.  Mode zero is the
+default behavoir.  The logical operations are bitwise on the eight
+bits of each color channel.  The numerical operations work on the
+color values as integers.
+
+
+<li> 0 : Overwrite
+<li> 1 : Xor
+<li> 2 : And
+<li> 3 : Or
+<li> 4 : Max
+<li> 5 : Min
+
+
+
+<H2><font color="#000000">void getpixel(int xp,int yp,
+                 unsigned short int &rv,
+                 unsigned short int &gv, 
+                 unsigned short int &bv);</font></H2>
+
+<p>Get the (R,G,B) color value at pixel position (xp,yp).
+
+<hr size=4>
+<H2><a name="lines"><font color="#00AA00">Line Drawing</font></a>
+    <a href="#top">(top)</a></H2>
+
+<H2><font color="#000000">void MoveTo(long int xv,long int yv);</font></H2>
+
+<p>Moves the brush to position (x,y).
+
+<H2><font color="#000000">void LineTo(long int xv,long int yv);</font></H2>
+
+<p>Draws a line from the current brush position to the point (x,y)
+specified.  This line is one pixel thick and is drawn in the current
+brush color.
+
+<H2><font color="#000000">void DrawPath(long int *path,int n);</font></H2>
+
+<p>A path is a sequence of 2n long ints in an array.  This method
+draws a line joining those longints, interpreted in adjacent pairs as
+points, in order, using the current brush color.
+
+<H2><font color="#000000">void BigLineTo(long int xv,long int yv);
+</font></H2>
+
+<p>Like LineTo, but draws a line thicker than one pixel.  The
+thickness and color of the line are set with <i>SetLargeW</i>,
+<i>SetMin</i>, and <i>SetMax</i>.
+
+<H2><font color="#000000">void BigDrawPath(long int *path,int n);
+</font></H2>
+
+<p>Like drawpath, but using <i>BigLineTo</i> to draw the individual
+segments.
+
+<H2><font color="#000000">void SetLargeW(int NewWidth);
+</font></H2>
+
+<p>Sets the radius of a big line of circle.
+
+<H2><font color="#000000">void SetMin(unsigned short int red,
+unsigned short int green,
+unsigned short int blue);
+</font></H2>
+
+<p>Sets the (R,G,B) color at the edge of a large line or circle.
+
+<H2><font color="#000000">void SetMax(unsigned short int red,
+unsigned short int green,
+unsigned short int blue);
+</font></H2>
+
+<p>Sets the core color of a big line or circle.
+
+<hr size=4>
+
+<H2><a name="shapes"><font color="#00AA00">Assorted Shapes</font></a>
+    <a href="#top">(top)</a></H2>
+
+<H2><font color="#000000">void DrawRect(long int a,long int b,
+long int c,long int d);
+</font></H2>
+
+<p>Draws a rectangle with corners (a,b) and (c,d) in the current color.
+
+<H2><font color="#000000">void Circle(long int h,long int k,long int r);
+</font></H2>
+
+<p>Draws a one pixel circle of radius r centered at (h,k) with the
+current brush color.
+
+<H2><font color="#000000">void BigCircle(long int h,long int k,long int r);
+</font></H2>
+
+<p>Draws a circle of radius r centered at (h,k) with the same controls
+as the <i>BigLine</i> routine.
+
+
+<H2><font color="#000000">void Disk(long int h,long int k,long int r);
+</font></H2>
+
+<p>Fills in a disk of radius r with center h,k in the current brush color.
+
+<H2><font color="#000000">void Elipse(long int h,long int k,
+long int R,long int r,
+double th);
+</font></H2>
+
+<p>Draws an elipse with center (h,k) and radius R and r rotated
+through an angle of th.
+
+<H2><font color="#000000">void ShadeDisk(long int h,long int k,long
+int r);</font></H2>
+
+<p>Fills in a disk of radius r with center h,k shading from
+rim to center using the colors for big lines (see: <i>SetMin</i>,
+<i>SetMax</i>.
+
+<H2><font color="#000000">void ShadeElipse(long int h,long int k,
+long int R,long int r,double th);
+</font></H2>
+
+<p>Shades an ellipse with center (h,k) and radius R and r rotated
+through an angle of th, shading from rim to center using the colors
+for big lines (see: <i>SetMin</i>, <i>SetMax</i>).
+
+<H2><font color="#000000">void ReflectElipse(long int h,long int k,
+long int R,long int r,double th,double xx,double yy,double zz);
+</font></H2>
+
+<p>Shades an ellipse with center (h,k) and radius R and r rotated
+through an angle of th, shading from rim to center using the colors
+for big lines (see: <i>SetMin</i>, <i>SetMax</i>).  The arguments xx,
+yy, and zz establish the direction from which light comes.  The
+minimum and maximum color correspond to light and dark for this
+version of the ellipse shader.
+
+<hr size=4>
+
+<H2><a name="fillpath"><font color="#00AA00">Filled objects</font></a>
+    <a href="#top">(top)</a></H2>
+
+<H2><font color="#000000">void SetFill(unsigned short int red,
+unsigned short int green,
+unsigned short int blue);
+</font></H2>
+
+<p>Set the fill color for filled objects to the given (R,G,B) color.
+
+<H2><font color="#000000">void FillPath(long int *path,int n);
+</font></H2>
+
+<p>Similar to <i>DrawPath</i> but fills in the contact interior of the
+path with the fill color.
+
+<hr size=4>
+
+<H2><a name="turtle"><font color="#00AA00">Turtle commands</font></a>
+    <a href="#top">(top)</a></H2>
+
+
+<H2><font color="#000000">void Tstart(int xp,int yp,double th); 
+</font></H2>
+
+<p>This routine creates or restarts a turtle at position (xp,yp) going
+in direction th in degrees.
+
+<H2><font color="#000000">
+void TPencolor(unsigned short int rpc, 
+               unsigned short int gpc,
+               unsigned short int bpc);
+</font></H2>
+
+<p>This command changes the turtle pen color.
+
+<H2><font color="#000000">void TPenType(int npt);
+</font></H2>
+
+<p>This command changes the pen type.  The available types are 0 (up),
+1 (one pixel), or 2 (a cross of five pixels "thick").
+
+<H2><font color="#000000">void Tpush();
+</font></H2>
+
+<p>Save the state of the turtle on a stack.  The state includes
+position, heading, pen type, and pen color.
+
+<H2><font color="#000000">void Tpop();
+</font></H2>
+
+<p>Pop the turtle state.  This command has no effect if the stack is
+empty.
+
+<H2><font color="#000000">void Tforward(double d);
+</font></H2>
+
+<p>Move the turtle forward a distance d along the current heading.
+
+<H2><font color="#000000">void Tturn(double t);
+</font></H2>
+
+Execute a turn of t degrees.
+
+<hr size=4>
+
+<H2><a name="splines"><font color="#00AA00">Spline tools</font></a>
+    <a href="#top">(top)</a></H2>
+
+<H2><font color="#000000">
+void CSPath(long int *path,int n);</font></H2>
+
+<p>Similar to <i>DrawPath</i> but fits a curves spline path through
+the points.
+
+<H2><font color="#000000">
+void CSPoly(long int *path,int n);</font></H2>
+
+<p>Similar to <i>DrawPath</i> but fits a curves spline path through
+the points and then closes it to make a curved polygon.
+
+<hr size=4>
+
+<H2><a name="fullpic"><font color="#00AA00">Full picture
+manipulators</font></a> <a href="#top">(top)</a></H2>
+
+<H2><font color="#000000">
+void invert();
+</font></H2>
+
+<p>Invert the intensity values for each of the three color chanels at
+all pixel values.
+
+<H2><font color="#000000">
+void con1(); 
+</font></H2>
+
+<p>Central convolution.
+
+<H2><font color="#000000">
+void con2(); 
+</font></H2>
+
+<p>Embossing convolution.
+
+<H2><font color="#000000">
+void con3(); 
+</font></H2>
+
+<p>Blur convolution.
+
+<H2><font color="#000000">
+void avg2(unsigned short int red,
+unsigned short int green,
+unsigned short int blue);
+</font></H2>
+
+<p>Average all pixel values with the given (R,G,B) color.
+
+<H2><font color="#000000">
+void gray();
+</font></H2>
+
+<p>Transform a color image to grayscale.  Multiple applications will
+have little or no effect.
+
+
+<hr size=4>
+
+<H2><a name="putool"><font color="#00AA00">Put tools</font></a> <a
+href="#top">(top)</a></H2>
+
+<H2><font color="#000000">
+void putat(long int xv,long int yv,pbm &putee);
+</font></H2>
+
+<p>Transfers the non-black pixels of the putee to the current picture
+using the putpixel method.
+
+<H2><font color="#000000">
+void pasteat(long int xv,long int yv,pbm &putee);
+</font></H2>
+
+<p>Transfers all pixels of the putee to the current picture using the
+putpixel method.
+
+<H2><font color="#000000">
+void sput(long int r,pbm &im);
+</font></H2>
+
+<p>Performs a transfer of the picture in im to the current picture in
+a manner that deforms it onto the front half of a sphere.
+
+<H2><font color="#000000">
+void mask(unsigned short int rm,
+          unsigned short int gm,
+          unsigned short int bm,
+          pbm &M);
+</font></H2>
+
+<p>Scan the picture.  Any pixel that is <i>not</i> color (rm,gm,bm) is
+replaced with the pixels from the corresponding (tiled) version of the
+masking picture.
+
+<H2><font color="#000000">
+void mask(pbm &M);
+</font></H2>
+
+<p>Scan the picture.  Any pixel that is <i>not</i> the current
+packground color is replaced with the pixels from the corresponding
+(tiled) version of the masking picture.
+
+<hr size=4>
+
+<H2><a name="IO"><font color="#00AA00">Input output</font></a> <a
+href="#top">(top)</a></H2>
+
+<H2><font color="#000000">
+void writeXV(char *filename);
+</font></H2>
+
+<p>Write the picture to a file named <i>filename</i> in the portable
+format.  The format is the ASCII (long) version of the portable
+bitmap.  Both XV and the GIMP can read this format.  So can patient
+human beings.
+
+<H2><font color="#000000">
+void writeXVC(char *filename);
+</font></H2>
+
+<p>Write the picture to a file named <i>filename</i> in the portable
+format.  The format is the raw (short) version of the portable bitmap.
+Both XV and the GIMP can read this format.
+
+<H2><font color="#000000">
+void readXV(char *filename);
+</font></H2>
+
+<p>ead a picture from a file named <i>filename</i> in the ASCII
+version of the portable format.  The read mehtod re-allocates memory
+to change dimensions.
+<hr size=4>
+
+<H2><a name="code"><font color="#00AA00">Code download</font></a> <a
+href="#top">(top)</a></H2>
+
+<UL>
+<li><a href="pbm.h">pbm.h</a>
+<li><a href="pbm.cpp">pbm.cpp</a>
+</UL>
+
+<hr size=4>
+
+</body>
+
+</html>

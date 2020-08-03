@@ -1,0 +1,37 @@
+convert pic00.ppm pic0.png
+convert pic01.ppm pic1.png
+convert pic02.ppm pic2.png
+convert pic03.ppm pic3.png
+convert pic04.ppm pic4.png
+convert pic05.ppm pic5.png
+convert pic06.ppm pic6.png
+convert pic07.ppm pic7.png
+convert pic08.ppm pic8.png
+convert pic09.ppm pic9.png
+convert pic10.ppm pic10.png
+convert pic11.ppm pic11.png
+convert pic12.ppm pic12.png
+convert pic13.ppm pic13.png
+convert pic14.ppm pic14.png
+convert pic15.ppm pic15.png
+convert pic16.ppm pic16.png
+convert pic17.ppm pic17.png
+convert pic18.ppm pic18.png
+convert pic19.ppm pic19.png
+convert pic20.ppm pic20.png
+convert pic21.ppm pic21.png
+convert pic22.ppm pic22.png
+convert pic23.ppm pic23.png
+convert pic24.ppm pic24.png
+convert pic25.ppm pic25.png
+convert pic26.ppm pic26.png
+convert pic27.ppm pic27.png
+convert pic28.ppm pic28.png
+convert pic29.ppm pic29.png
+montage pic[0-29].png montage.png
+
+rm pic*.ppm
+mogrify -format png *.ppm
+
+g++ -lm -O3 Multirender.cpp realstring.cpp  stat.cpp pbm.cpp 
+./a.out
