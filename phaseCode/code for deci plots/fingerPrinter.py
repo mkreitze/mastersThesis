@@ -30,14 +30,14 @@ fingerPrints=[]
 
 #generate all score matricies    
 print("Generating score matricies")
-for x in range(startXVal,endXVal,sizeOfStepX):
+for x in numpy.arange(startXVal,endXVal,sizeOfStepX):
     #y vals are coded to follow -sqrt(R_o^2-x^2)<y<sqrt(R_o^2-x^2)    
     if(R-pow(x,2)<0): #only reals allowed
         continue
     endYVal=math.sqrt(R-pow(x,2))
     startYVal=(-1)*endYVal
     #incase were using a predetermined y val set mute above
-    for y in range(startYVal,endYVal,sizeOfStepY): #this is -sqrt(R_o^2-x^2)<=y<=(R_o^2-x^2)  
+    for y in numpy.arange(startYVal,endYVal,sizeOfStepY): #this is -sqrt(R_o^2-x^2)<=y<=(R_o^2-x^2)  
         if((R-pow(x,2)-pow(y,2))<0): #because cancellation problems
             continue
         z=math.sqrt(R-pow(x,2)-pow(y,2))
@@ -56,12 +56,11 @@ for x in range(startXVal,endXVal,sizeOfStepX):
 #its going to be hard coded for sanity. Develop an automated system in the future
 #If we account for varying through the possible center states we only care about the number of every state in the neighbourhood.
 #by default we record number of state 1, number of state 2 etc...
-neighbourhoods.append([3,0])
-neighbourhoods.append([2,1])
-neighbourhoods.append([1,2])
-neighbourhoods.append([0,3])
-neighbourhoods.append([1,2])
-neighbourhoods.append([2,1])
+neighbourhoods.append([4,0])
+neighbourhoods.append([3,1])
+neighbourhoods.append([2,2])
+neighbourhoods.append([1,3])
+neighbourhoods.append([0,4])
 
 print("Generating fingerPrints")
 #generates scoredFingerprint
@@ -75,6 +74,7 @@ for idx,fingy in enumerate(fingerPrints):
             tempDic[str(centerState)+":"+str(neighbourhood)]=tempScore
     fingy.scoredFingerprint=sorted(tempDic.items(), key = lambda kv:(kv[1], kv[0]))
     print("Finished generating "+str(idx)+" of "+str(len(fingerPrints))+" fingerprints")
+
 
 
 print("Comparing fingerPrints")
@@ -111,8 +111,12 @@ ax1=plt.axes()
 ax1.set_xlim(startXVal-amountOffsetX,endXVal+amountOffsetX)
 #change to y if custom
 ax1.set_ylim(startXVal-amountOffsetX,endXVal+amountOffsetX)
-
+increment=0
 behaviourNum=0
+behaviourTotal=0
+for behaviourSet in behaviourSets: 
+    behaviourTotal+=1
+increment=float(20000)/float(behaviourTotal)
 for behaviourSet in behaviourSets: 
     xs=[]
     ys=[]
@@ -121,10 +125,11 @@ for behaviourSet in behaviourSets:
         ys.append(fbca.y)
     behaviourNum+=1
     #give the behaviour set a unique colour from the colour map and plot the xy points in this colour
-    magma = cm.get_cmap('gist_ncar', 10000) #mod work is (100*(behaviourNum%100)+behaviourNum)
-    ax1.scatter(xs,ys,c=magma(100*behaviourNum),label=str(behaviourNum))
+    magma = cm.get_cmap('gist_ncar', 20000) #mod work is (100*(behaviourNum%100)+behaviourNum)
+    ax1.scatter(xs,ys,c=magma(int(increment*behaviourNum)),label=str(behaviourNum))
 #save the image
 plt.savefig(str(QUANTIFER)+".png")
+
 
 #for sanity im going to record the behaviours down on a paper (obviously switch QUANTIFER)
 behaviourNum=0
