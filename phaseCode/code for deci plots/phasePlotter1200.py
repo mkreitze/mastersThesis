@@ -114,7 +114,7 @@ def updateMap(CAMap,scoreMatrix):
                 col=CAMap[(x+z[0])%CALength][(y+z[1])%CAWidth].state #mod used to connect edges
                 CAMap[x][y].score+=scoreMatrix[row+col] #since the score matrix is a list, row+col gives the correct entry
     #start by copying the map
-    CAMapCopy=copy.copy(CAMap)
+    CAMapCopy=copyOver(CAMap)
     #for every cell, find the highest score among neighbours
     for x in range(0,CALength):
         for y in range(0,CAWidth):

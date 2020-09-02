@@ -30,7 +30,7 @@ numOfGens=20 #number of generations
 numOfStates=2 #number of states (good until 10)... I cant use more than 2
 amountOffsetX=0.5
 amountOffsetY=0.5
-QUANTIFER="Update"
+QUANTIFER="Update Int"
 random.seed(1) #1 is considered fixed
 
 #each cell has a score and a state (calculated by standard FBCA methods)
@@ -114,7 +114,7 @@ def updateMap(CAMap,scoreMatrix):
                 col=CAMap[(x+z[0])%CALength][(y+z[1])%CAWidth].state #mod used to connect edges
                 CAMap[x][y].score+=scoreMatrix[row+col] #since the score matrix is a list, row+col gives the correct entry
     #start by copying the map
-    CAMapCopy=copy.copy(CAMap)
+    CAMapCopy=copyOver(CAMap)
     #for every cell, find the highest score among neighbours
     for x in range(0,CALength):
         for y in range(0,CAWidth):
@@ -170,7 +170,7 @@ for a in range (5,45,5):
     ignoreList=[] #used to avoid double counting for the behaviours
     if a==0:
         a=1
-    QUANTIFER="Update Run "+str(a)
+    QUANTIFER="Update Int Run "+str(a)
     numOfGens=a
     #generate all score matricies    
     print(str(a)+" Generating score matricies")
