@@ -104,15 +104,20 @@ def updateMap(CAMap,scoreMatrix):
     for x in range(0,CALength):
         for y in range(0,CAWidth):
             #Need to get score from center square and its neighbours.
-            row=0; row = CAMap[x][y].state*numOfStates #the center colour determines the row of the score matrix used 
-            col=0; #the col of the score matrix used will depend on the  neighbours state
+            row = CAMap[x][y].state*numOfStates #the center colour determines the row of the score matrix used 
+            #new method to save a small amount of computation
+            col0=CAMap[(x+neighbours[0][0])%CALength][(y+neighbours[0][1])%CAWidth].state 
+            col1=CAMap[(x+neighbours[1][0])%CALength][(y+neighbours[1][1])%CAWidth].state 
+            col2=CAMap[(x+neighbours[2][0])%CALength][(y+neighbours[2][1])%CAWidth].state 
+            col3=CAMap[(x+neighbours[3][0])%CALength][(y+neighbours[3][1])%CAWidth].state
+            CAMap[x][y].score=scoreMatrix[row+col0]+scoreMatrix[row+col1]+scoreMatrix[row+col2]+scoreMatrix[row+col3]
 
-            CAMap[x][y].score=0 #resets center square's score
-
-            #sums scores
-            for z in neighbours:
-                col=CAMap[(x+z[0])%CALength][(y+z[1])%CAWidth].state #mod used to connect edges
-                CAMap[x][y].score+=scoreMatrix[row+col] #since the score matrix is a list, row+col gives the correct entry
+#            #Old method
+#            #resets score
+#            CAMap[x][y].score=0
+#            for idx,z in enumerate(neighbours):
+#                col=CAMap[(x+z[0])%CALength][(y+z[1])%CAWidth].state #mod used to connect edges
+#                CAMap[x][y].score+=scoreMatrix[row+col] #since the score matrix is a list, row+col gives the correct entry
     #start by copying the map
     CAMapCopy=copyOver(CAMap)
 
